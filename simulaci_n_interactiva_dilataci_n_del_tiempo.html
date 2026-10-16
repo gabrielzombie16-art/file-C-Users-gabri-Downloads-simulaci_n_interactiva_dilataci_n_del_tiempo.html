@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulación Interactiva - Dilatación del Tiempo y Relatividad</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN for Lorentz Factor Curve Graph -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        tech: ['Orbitron', 'sans-serif'],
+                        rajdhani: ['Rajdhani', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        space: {
+                            950: '#030712',
+                            900: '#0b0f19',
+                            800: '#111827',
+                            700: '#1f2937',
+                            600: '#374151',
+                        },
+                        neon: {
+                            cyan: '#00f3ff',
+                            purple: '#a855f7',
+                            amber: '#f59e0b',
+                            emerald: '#10b981',
+                            rose: '#f43f5e'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Glowing & Aesthetic Touches */
+        body {
+            background-color: #030712;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(0, 243, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 85%, rgba(168, 85, 247, 0.08) 0%, transparent 40%);
+            background-attachment: fixed;
+            color: #f3f4f6;
+        }
+
+        .neon-border-cyan {
+            border: 1px solid rgba(0, 243, 255, 0.3);
+            box-shadow: 0 0 15px rgba(0, 243, 255, 0.1);
+        }
+
+        .neon-border-purple {
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.1);
+        }
+
+        /* Custom Slider Styling */
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #00f3ff;
+            cursor: pointer;
+            box-shadow: 0 0 10px #00f3ff;
+        }
+
+        /* Smooth Canvas Container */
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen p-3 md:p-6 flex flex-col justify-between space-y-6">
+
+    <!-- HEADER / HEADER PANEL -->
+    <header class="w-full max-w-7xl mx-auto text-center space-y-2">
+        <div class="inline-flex items-center gap-2 bg-space-800/90 border border-neon-cyan/40 px-4 py-1.5 rounded-full shadow-lg">
+            <span class="inline-block w-2.5 h-2.5 rounded-full bg-neon-cyan animate-pulse"></span>
+            <span class="text-neon-cyan font-tech tracking-widest text-xs md:text-sm uppercase font-bold">
+                <i class="fa-solid fa-flask mr-1"></i> Proyecto de Feria Científica • Relatividad Especial
+            </span>
+        </div>
+        <h1 class="text-3xl md:text-5xl font-black font-tech tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan via-white to-neon-purple uppercase pt-1">
+            Dilatación del Tiempo & La Paradoja de los Gemelos
+        </h1>
+        <p class="text-slate-400 text-sm md:text-base max-w-3xl mx-auto font-medium">
+            Demostración experimental interactiva: ¿Cómo afecta la velocidad de la luz y el tipo de propulsión al paso del tiempo?
+        </p>
+    </header>
+
+    <!-- SECTION 1: IDENTIFICACIÓN DE VARIABLES CIENTÍFICAS (REQUIRED FAIR BOARD) -->
+    <section class="w-full max-w-7xl mx-auto bg-space-800/90 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-space-700 shadow-xl">
+        <h2 class="text-lg font-bold font-tech text-neon-cyan mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-neon-cyan"></i> Identificación Oficial de Variables del Experimento
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs md:text-sm">
+            <div class="bg-space-900/90 p-3.5 rounded-xl border-l-4 border-neon-cyan flex flex-col justify-between">
+                <div>
+                    <span class="font-bold font-tech text-neon-cyan uppercase block mb-1">
+                        <i class="fa-solid fa-sliders mr-1"></i> Variable Independiente (X)
+                    </span>
+                    <p class="text-slate-300 leading-relaxed">
+                        <b>1. Velocidad de la nave ($v$):</b> Regulada entre $0.00c$ y $0.99c$.<br>
+                        <b>2. Tipo de Propulsión:</b> Fósil vs. Renovables (Vela Solar / Fusión $H_2$).
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-space-900/90 p-3.5 rounded-xl border-l-4 border-neon-purple flex flex-col justify-between">
+                <div>
+                    <span class="font-bold font-tech text-neon-purple uppercase block mb-1">
+                        <i class="fa-solid fa-clock-rotate-left mr-1"></i> Variable Dependiente (Y)
+                    </span>
+                    <p class="text-slate-300 leading-relaxed">
+                        <b>1. Tiempo transcurrido ($\Delta t$):</b> Diferencia de edades entre gemelos.<br>
+                        <b>2. Factor de Lorentz ($\gamma$):</b> Magnitud de dilatación temporal.
+                    </p>
+                </div>
+            </div>
+
+            <div class="bg-space-900/90 p-3.5 rounded-xl border-l-4 border-neon-amber flex flex-col justify-between">
+                <div>
+                    <span class="font-bold font-tech text-neon-amber uppercase block mb-1">
+                        <i class="fa-solid fa-lock mr-1"></i> Variables Controladas
+                    </span>
+                    <p class="text-slate-300 leading-relaxed">
+                        <b>1. Velocidad de la Luz ($c$):</b> Constante de $300,000 \text{ km/s}$.<br>
+                        <b>2. Tiempo Propio ($\Delta t_0$):</b> Distancia del reloj de luz en reposo.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN DASHBOARD CONTENT -->
+    <main class="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+        <!-- LEFT COLUMN: Canvas simulation & Controls (8 Cols) -->
+        <section class="lg:col-span-8 flex flex-col gap-6">
+
+            <!-- SIMULATION CANVAS CARD -->
+            <div class="bg-space-800/90 backdrop-blur-md rounded-2xl p-4 md:p-6 neon-border-cyan flex flex-col shadow-xl">
+                <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
+                    <h2 class="text-lg md:text-xl font-bold font-tech text-neon-cyan flex items-center">
+                        <i class="fa-solid fa-microscope mr-2"></i> Experimento: Relojes de Luz Relativistas
+                    </h2>
+                    <span class="text-xs bg-space-900 border border-space-700 px-3 py-1 rounded-full text-slate-300 font-tech">
+                        Trayectoria fotónica $c = \text{Constante}$
+                    </span>
+                </div>
+
+                <!-- Canvas Area -->
+                <div class="relative w-full h-[280px] md:h-[340px] bg-space-950 rounded-xl overflow-hidden border border-space-700 shadow-inner">
+                    <canvas id="lightClockCanvas" class="w-full h-full block"></canvas>
+                    
+                    <!-- Overlay Badge -->
+                    <div class="absolute top-3 left-3 bg-space-900/90 backdrop-blur-md border border-neon-cyan/40 px-3 py-1 rounded-lg text-xs font-tech text-neon-cyan flex items-center gap-2">
+                        <span class="inline-block w-2 h-2 rounded-full bg-neon-cyan animate-ping"></span>
+                        Simulador de Fotones
+                    </div>
+                </div>
+
+                <!-- CONTROLS & FUELS PANEL -->
+                <div class="mt-5 bg-space-900/90 p-4 rounded-xl border border-space-700 space-y-4">
+                    
+                    <!-- FUEL SELECTION MODULE (3 REQUIRED FUELS + 1 THEORETICAL) -->
+                    <div>
+                        <div class="flex justify-between items-center mb-2">
+                            <label class="font-tech text-xs uppercase tracking-wider text-slate-300 font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-gas-pump text-neon-amber"></i> Selecciona la Variable de Propulsión (Combustible):
+                            </label>
+                            <span class="text-[11px] text-slate-400 font-tech">Impacta la velocidad máxima ($v$) y huella ecológica</span>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2.5">
+                            <!-- 1. Keroseno (Fossil - Non Renewable) -->
+                            <button type="button" data-fuel="fossil" class="fuel-card text-left p-2.5 rounded-xl border border-slate-700 bg-space-800 hover:border-neon-rose transition-all flex flex-col justify-between group">
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold font-tech text-neon-rose">1. Keroseno Fósil</span>
+                                        <span class="text-[9px] bg-rose-950 text-neon-rose border border-rose-800 px-1.5 py-0.5 rounded font-tech">NO RENOVABLE</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400 mt-1">Máx: <b class="text-white">0.001c</b> (~300 km/s)</p>
+                                </div>
+                                <div class="text-[10px] text-rose-400/80 font-tech mt-2 pt-1 border-t border-space-700/60">
+                                    <i class="fa-solid fa-smog mr-1"></i> Alta emisión de CO₂
+                                </div>
+                            </button>
+
+                            <!-- 2. Vela Solar (Renewable 1) -->
+                            <button type="button" data-fuel="solar" class="fuel-card text-left p-2.5 rounded-xl border border-slate-700 bg-space-800 hover:border-neon-cyan transition-all flex flex-col justify-between group">
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold font-tech text-neon-cyan">2. Vela Solar</span>
+                                        <span class="text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-1.5 py-0.5 rounded font-tech">RENOVABLE</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400 mt-1">Máx: <b class="text-white">0.200c</b> (~60,000 km/s)</p>
+                                </div>
+                                <div class="text-[10px] text-emerald-400 font-tech mt-2 pt-1 border-t border-space-700/60">
+                                    <i class="fa-solid fa-leaf mr-1"></i> 0% Emisiones / Luz
+                                </div>
+                            </button>
+
+                            <!-- 3. Fusión H2 (Renewable 2) -->
+                            <button type="button" data-fuel="fusion" class="fuel-card text-left p-2.5 rounded-xl border border-neon-purple bg-space-800 hover:border-neon-purple transition-all flex flex-col justify-between group">
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold font-tech text-neon-purple">3. Fusión H₂ Verde</span>
+                                        <span class="text-[9px] bg-emerald-950 text-emerald-400 border border-emerald-800 px-1.5 py-0.5 rounded font-tech">RENOVABLE</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400 mt-1">Máx: <b class="text-white">0.850c</b> (~255,000 km/s)</p>
+                                </div>
+                                <div class="text-[10px] text-emerald-400 font-tech mt-2 pt-1 border-t border-space-700/60">
+                                    <i class="fa-solid fa-atom mr-1"></i> Cero CO₂ / Alto Isp
+                                </div>
+                            </button>
+
+                            <!-- 4. Antimateria (Theoretical) -->
+                            <button type="button" data-fuel="theoretical" class="fuel-card text-left p-2.5 rounded-xl border border-slate-700 bg-space-800 hover:border-neon-amber transition-all flex flex-col justify-between group">
+                                <div>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-xs font-bold font-tech text-neon-amber">4. Motor Antimateria</span>
+                                        <span class="text-[9px] bg-amber-950 text-amber-400 border border-amber-800 px-1.5 py-0.5 rounded font-tech">TEÓRICO</span>
+                                    </div>
+                                    <p class="text-[11px] text-slate-400 mt-1">Máx: <b class="text-white">0.990c</b> (~297,000 km/s)</p>
+                                </div>
+                                <div class="text-[10px] text-amber-400 font-tech mt-2 pt-1 border-t border-space-700/60">
+                                    <i class="fa-solid fa-bolt mr-1"></i> Eficiencia 100%
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- FUEL METRICS & ECO BADGE BAR -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 bg-space-950 p-3 rounded-lg border border-space-700 text-xs">
+                        <div>
+                            <span class="text-slate-400 block mb-0.5">Huella Ecológica:</span>
+                            <span id="fuelEcoText" class="font-bold font-tech text-emerald-400">0% CO₂ - Cero Emisiones</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block mb-0.5">Impulso Específico (Isp):</span>
+                            <span id="fuelIspText" class="font-bold font-tech text-neon-cyan">~100,000 segundos</span>
+                        </div>
+                        <div>
+                            <span class="text-slate-400 block mb-0.5">Eficiencia Relativista:</span>
+                            <span id="fuelEffText" class="font-bold font-tech text-neon-purple">Muy Alta (0.85c)</span>
+                        </div>
+                    </div>
+
+                    <!-- SPEED SLIDER & SIMULATION TRIGGER BUTTONS -->
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-4 pt-2">
+                        <!-- Speed Control Slider -->
+                        <div class="w-full md:w-2/3">
+                            <div class="flex justify-between items-center mb-1.5">
+                                <label for="speedSlider" class="font-tech text-xs md:text-sm font-bold text-slate-200 flex items-center gap-2">
+                                    <i class="fa-solid fa-gauge-high text-neon-cyan"></i> Variable Independiente: Velocidad ($v$):
+                                </label>
+                                <span id="speedDisplay" class="font-tech text-base md:text-lg font-bold text-neon-cyan bg-space-950 px-3 py-0.5 rounded-lg border border-neon-cyan/40">
+                                    0.800 c
+                                </span>
+                            </div>
+                            <input type="range" id="speedSlider" min="0" max="0.85" step="0.001" value="0.80" 
+                                class="w-full h-2 bg-space-700 rounded-lg appearance-none cursor-pointer accent-neon-cyan">
+                            <div class="flex justify-between text-[10px] text-slate-400 font-tech mt-1">
+                                <span>0.00c</span>
+                                <span>0.25c</span>
+                                <span>0.50c</span>
+                                <span>0.75c</span>
+                                <span id="maxSpeedDisplay">0.85c (Límite)</span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex items-center gap-2 w-full md:w-auto justify-end">
+                            <button id="btnPlayPause" class="flex-1 md:flex-none px-5 py-2.5 bg-gradient-to-r from-neon-cyan to-blue-600 text-space-950 font-tech font-bold rounded-xl hover:brightness-125 transition-all shadow-lg shadow-neon-cyan/20 flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-play" id="playIcon"></i> <span id="playBtnText">Iniciar</span>
+                            </button>
+                            <button id="btnReset" class="px-4 py-2.5 bg-space-700 hover:bg-space-600 text-slate-200 font-tech font-bold rounded-xl transition-all border border-slate-600 flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-rotate-right"></i> Reiniciar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PARADOJA DE LOS GEMELOS CARD -->
+            <div class="bg-space-800/90 backdrop-blur-md rounded-2xl p-4 md:p-6 neon-border-purple shadow-xl">
+                <h2 class="text-lg md:text-xl font-bold font-tech text-neon-purple mb-4 flex items-center">
+                    <i class="fa-solid fa-users-viewfinder mr-2"></i> La Paradoja de los Gemelos en Tiempo Real
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Gemelo Terrestre -->
+                    <div class="bg-space-950 p-4 rounded-xl border border-neon-cyan/30 flex items-center gap-4">
+                        <div class="relative">
+                            <div class="w-14 h-14 rounded-full bg-space-800 border-2 border-neon-cyan flex items-center justify-center text-2xl">
+                                👨‍💼
+                            </div>
+                            <span class="absolute -bottom-1 -right-1 bg-neon-cyan text-space-950 text-[9px] font-bold font-tech px-1.5 py-0.5 rounded">TIERRA</span>
+                        </div>
+                        <div>
+                            <div class="text-[11px] text-slate-400 font-tech uppercase">Gemelo en Reposo (Tierra)</div>
+                            <div class="text-2xl font-tech font-bold text-neon-cyan" id="earthTimeDisplay">0.0 años</div>
+                            <div class="text-xs text-slate-300">Edad total: <span id="earthAgeDisplay" class="font-bold text-white">20.0</span> años</div>
+                        </div>
+                    </div>
+
+                    <!-- Gemelo Astronauta -->
+                    <div class="bg-space-950 p-4 rounded-xl border border-neon-purple/30 flex items-center gap-4">
+                        <div class="relative">
+                            <div class="w-14 h-14 rounded-full bg-space-800 border-2 border-neon-purple flex items-center justify-center text-2xl">
+                                👩‍🚀
+                            </div>
+                            <span class="absolute -bottom-1 -right-1 bg-neon-purple text-white text-[9px] font-bold font-tech px-1.5 py-0.5 rounded">NAVE</span>
+                        </div>
+                        <div>
+                            <div class="text-[11px] text-slate-400 font-tech uppercase">Gemelo Viajero (Nave)</div>
+                            <div class="text-2xl font-tech font-bold text-neon-purple" id="spaceTimeDisplay">0.0 años</div>
+                            <div class="text-xs text-slate-300">Edad total: <span id="spaceAgeDisplay" class="font-bold text-white">20.0</span> años</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Conclusion Banner -->
+                <div class="mt-4 bg-space-950/90 p-3 rounded-xl border border-space-700 text-center text-xs md:text-sm font-rajdhani">
+                    <span id="twinConclusionText" class="text-slate-200">
+                        Selecciona velocidad e inicia la simulación para calcular el envejecimiento diferencial de los gemelos.
+                    </span>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- RIGHT COLUMN: Metrics & Lorentz Graph (4 Cols) -->
+        <section class="lg:col-span-4 flex flex-col gap-6">
+
+            <!-- METRICAS CIENTIFICAS EN VIVO -->
+            <div class="bg-space-800/90 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-space-700 shadow-xl">
+                <h3 class="text-base font-bold font-tech text-slate-200 mb-3 border-b border-space-700 pb-2 flex items-center">
+                    <i class="fa-solid fa-calculator mr-2 text-neon-amber"></i> Métricas Relativistas
+                </h3>
+
+                <div class="space-y-3">
+                    <!-- Factor Lorentz -->
+                    <div class="bg-space-950 p-3.5 rounded-xl border border-space-700">
+                        <div class="text-xs text-slate-400 font-tech flex justify-between">
+                            <span>Factor Lorentz ($\gamma$)</span>
+                            <span class="text-neon-amber font-mono">1/√(1-v²/c²)</span>
+                        </div>
+                        <div class="text-3xl font-tech font-bold text-neon-amber mt-1" id="gammaDisplay">
+                            1.67
+                        </div>
+                        <p class="text-[11px] text-slate-400 mt-0.5">
+                            Por cada segundo en la nave, en la Tierra transcurren <span id="gammaExplain" class="text-neon-amber font-bold">1.67</span> segundos.
+                        </p>
+                    </div>
+
+                    <!-- Ratio de Tiempo -->
+                    <div class="bg-space-950 p-3.5 rounded-xl border border-space-700">
+                        <div class="text-xs text-slate-400 font-tech">Paso del Tiempo Relativo</div>
+                        <div class="w-full bg-space-800 h-3 rounded-full mt-2 overflow-hidden border border-space-700">
+                            <div id="timeRatioBar" class="bg-gradient-to-r from-neon-purple to-neon-cyan h-full transition-all duration-300" style="width: 60%"></div>
+                        </div>
+                        <div class="flex justify-between text-[11px] font-tech text-slate-300 mt-1.5">
+                            <span>Nave: <b class="text-neon-purple" id="shipTimePercent">60%</b></span>
+                            <span>Tierra: 100% (Normal)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GRAFICO INTERACTIVO (CURVA DE LORENTZ) -->
+            <div class="bg-space-800/90 backdrop-blur-md rounded-2xl p-4 md:p-6 border border-space-700 shadow-xl flex flex-col justify-between">
+                <div>
+                    <h3 class="text-base font-bold font-tech text-slate-200 mb-1 flex items-center">
+                        <i class="fa-solid fa-chart-line mr-2 text-neon-cyan"></i> Curva de Lorentz ($v$ vs $\gamma$)
+                    </h3>
+                    <p class="text-[11px] text-slate-400 mb-3">
+                        Punto actual del experimento marcado en tiempo real:
+                    </p>
+                </div>
+                <div class="w-full h-[200px] relative">
+                    <canvas id="gammaChart"></canvas>
+                </div>
+            </div>
+
+            <!-- RESUMEN DIDÁCTICO PARA JUECES -->
+            <div class="bg-space-800/90 backdrop-blur-md rounded-2xl p-4 border border-neon-cyan/20">
+                <h4 class="font-tech text-xs text-neon-cyan font-bold uppercase mb-1 flex items-center">
+                    <i class="fa-solid fa-circle-info mr-1"></i> Resumen para la Exposición
+                </h4>
+                <p class="text-[11px] text-slate-300 leading-relaxed">
+                    A velocidades cotidianas con combustibles fósiles, la dilatación es imperceptible ($\gamma \approx 1.00$). Solamente utilizando tecnologías limpias avanzadas (Vela Solar o Fusión $H_2$) se alcanzan fracciones de $c$ donde la paradoja del tiempo es cuantitativamente demostrable.
+                </p>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- FOOTER / CREDITOS -->
+    <footer class="w-full max-w-7xl mx-auto text-center text-xs text-slate-500 font-tech py-2 border-t border-space-800 mt-4">
+        Proyecto Demostrativo de Física Teórica para Feria Científica Escolar • Basado en la Teoría de la Relatividad Especial (1905)
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- 1. CONFIGURACIÓN DE FUELS / COMBUSTIBLES (VARIABLES) ---
+        const FUEL_DATABASE = {
+            fossil: {
+                name: "Keroseno Fósil",
+                maxSpeed: 0.001,
+                ecoText: "Alta contaminación (CO₂)",
+                ecoClass: "text-rose-400",
+                ispText: "~450 segundos",
+                effText: "Nula para viajes $c$",
+                glowColor: "#f43f5e"
+            },
+            solar: {
+                name: "Vela Solar Fotónica",
+                maxSpeed: 0.200,
+                ecoText: "0% CO₂ - Radiación Solar Limpia",
+                ecoClass: "text-emerald-400",
+                ispText: "Infinito (Luz solar)",
+                effText: "Moderada (0.20c)",
+                glowColor: "#00f3ff"
+            },
+            fusion: {
+                name: "Fusión Hidrógeno Verde",
+                maxSpeed: 0.850,
+                ecoText: "0% CO₂ - Emisión Helio Puro",
+                ecoClass: "text-emerald-400",
+                ispText: "~100,000 segundos",
+                effText: "Muy Alta (0.85c)",
+                glowColor: "#a855f7"
+            },
+            theoretical: {
+                name: "Motor Antimateria",
+                maxSpeed: 0.990,
+                ecoText: "Aniquilación Eficiencia 100%",
+                ecoClass: "text-amber-400",
+                ispText: "~3,000,000 segundos",
+                effText: "Extrema (0.99c)",
+                glowColor: "#f59e0b"
+            }
+        };
+
+        // --- 2. ESTADO GLOBAL DEL EXPERIMENTO ---
+        const state = {
+            selectedFuelKey: 'fusion',
+            v: 0.800,           // Velocidad actual en fraccion de c
+            isRunning: false,
+            earthTime: 0.0,     // Años transcurridos en la Tierra
+            spaceTime: 0.0,     // Años transcurridos en la Nave
+            baseAge: 20.0,      // Edad inicial de los gemelos
+            lightPulse1: 0.0,   // Posicion pulso Tierra (0 a 1)
+            lightPulse2: 0.0,   // Posicion pulso Nave (0 a 1)
+            dir1: 1,            // Direccion pulso 1
+            dir2: 1,            // Direccion pulso 2
+            shipOffsetX: 0,     // Posicion horizontal nave
+            zigzagPath: []      // Historial trayectoria foton
+        };
+
+        // --- 3. REFERENCIAS A ELEMENTOS DEL DOM ---
+        const speedSlider = document.getElementById('speedSlider');
+        const speedDisplay = document.getElementById('speedDisplay');
+        const maxSpeedDisplay = document.getElementById('maxSpeedDisplay');
+
+        const fuelEcoText = document.getElementById('fuelEcoText');
+        const fuelIspText = document.getElementById('fuelIspText');
+        const fuelEffText = document.getElementById('fuelEffText');
+
+        const btnPlayPause = document.getElementById('btnPlayPause');
+        const playIcon = document.getElementById('playIcon');
+        const playBtnText = document.getElementById('playBtnText');
+        const btnReset = document.getElementById('btnReset');
+
+        const gammaDisplay = document.getElementById('gammaDisplay');
+        const gammaExplain = document.getElementById('gammaExplain');
+        const earthTimeDisplay = document.getElementById('earthTimeDisplay');
+        const spaceTimeDisplay = document.getElementById('spaceTimeDisplay');
+        const earthAgeDisplay = document.getElementById('earthAgeDisplay');
+        const spaceAgeDisplay = document.getElementById('spaceAgeDisplay');
+        const twinConclusionText = document.getElementById('twinConclusionText');
+        const timeRatioBar = document.getElementById('timeRatioBar');
+        const shipTimePercent = document.getElementById('shipTimePercent');
+
+        // Canvas Setup
+        const canvas = document.getElementById('lightClockCanvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            if (!canvas) return;
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+
+        // --- 4. FORMULAS FISICAS RELATIVISTAS ---
+        function calculateGamma(v) {
+            if (v >= 0.999) return 22.36;
+            return 1 / Math.sqrt(1 - (v * v));
+        }
+
+        // --- 5. LÓGICA DE SELECCIÓN DE COMBUSTIBLE ---
+        function setFuelType(fuelKey) {
+            state.selectedFuelKey = fuelKey;
+            const fuel = FUEL_DATABASE[fuelKey];
+
+            // Update UI buttons styling
+            document.querySelectorAll('.fuel-card').forEach(card => {
+                const key = card.getAttribute('data-fuel');
+                if (key === fuelKey) {
+                    card.classList.add('ring-2', 'ring-offset-2', 'ring-offset-space-950', 'bg-space-700');
+                    if (key === 'fossil') card.classList.add('ring-rose-500');
+                    else if (key === 'solar') card.classList.add('ring-neon-cyan');
+                    else if (key === 'fusion') card.classList.add('ring-neon-purple');
+                    else card.classList.add('ring-neon-amber');
+                } else {
+                    card.className = 'fuel-card text-left p-2.5 rounded-xl border border-slate-700 bg-space-800 hover:border-slate-500 transition-all flex flex-col justify-between group';
+                }
+            });
+
+            // Set max slider bounds
+            speedSlider.max = fuel.maxSpeed.toString();
+            if (state.v > fuel.maxSpeed) {
+                state.v = fuel.maxSpeed;
+                speedSlider.value = state.v;
+            }
+
+            maxSpeedDisplay.textContent = `${fuel.maxSpeed.toFixed(3)}c (Límite)`;
+
+            // Update Metrics
+            fuelEcoText.textContent = fuel.ecoText;
+            fuelEcoText.className = `font-bold font-tech ${fuel.ecoClass}`;
+            fuelIspText.textContent = fuel.ispText;
+            fuelEffText.textContent = fuel.effText;
+
+            updateAllMetrics();
+            updateChartHighlight();
+        }
+
+        // --- 6. CHART.JS LORENTZ GRAPH ---
+        let gammaChart = null;
+
+        function initGammaChart() {
+            const chartCtx = document.getElementById('gammaChart').getContext('2d');
+            
+            const speedLabels = [];
+            const gammaData = [];
+
+            for (let v = 0; v <= 0.99; v += 0.05) {
+                speedLabels.push(v.toFixed(2));
+                gammaData.push(calculateGamma(v).toFixed(2));
+            }
+
+            gammaChart = new Chart(chartCtx, {
+                type: 'line',
+                data: {
+                    labels: speedLabels,
+                    datasets: [
+                        {
+                            label: 'Factor Gamma (γ)',
+                            data: gammaData,
+                            borderColor: '#00f3ff',
+                            backgroundColor: 'rgba(0, 243, 255, 0.08)',
+                            fill: true,
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            tension: 0.35
+                        },
+                        {
+                            label: 'Punto Actual',
+                            data: [],
+                            borderColor: '#a855f7',
+                            backgroundColor: '#a855f7',
+                            pointRadius: 6,
+                            pointHoverRadius: 8,
+                            showLine: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `v: ${ctx.label}c -> γ: ${ctx.raw}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Velocidad (v/c)', color: '#64748b', font: { size: 10 } },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94a3b8', font: { size: 9 } }
+                        },
+                        y: {
+                            title: { display: true, text: 'Gamma (γ)', color: '#64748b', font: { size: 10 } },
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94a3b8', font: { size: 9 } },
+                            max: 8
+                        }
+                    }
+                }
+            });
+
+            updateChartHighlight();
+        }
+
+        function updateChartHighlight() {
+            if (!gammaChart) return;
+
+            const currentGamma = calculateGamma(state.v);
+            const dataPoints = gammaChart.data.labels.map((vLabel) => {
+                const vVal = parseFloat(vLabel);
+                if (Math.abs(vVal - state.v) < 0.03) {
+                    return currentGamma;
+                }
+                return null;
+            });
+
+            gammaChart.data.datasets[1].data = [{
+                x: state.v.toFixed(2),
+                y: currentGamma.toFixed(2)
+            }];
+
+            gammaChart.update('none');
+        }
+
+        // --- 7. ACTUALIZACIÓN DE MÉTRICAS EN PANTALLA ---
+        function updateAllMetrics() {
+            const gamma = calculateGamma(state.v);
+
+            speedDisplay.textContent = `${state.v.toFixed(3)} c`;
+            gammaDisplay.textContent = gamma.toFixed(2);
+            gammaExplain.textContent = gamma.toFixed(2);
+
+            earthTimeDisplay.textContent = `${state.earthTime.toFixed(1)} años`;
+            spaceTimeDisplay.textContent = `${state.spaceTime.toFixed(1)} años`;
+
+            earthAgeDisplay.textContent = (state.baseAge + state.earthTime).toFixed(1);
+            spaceAgeDisplay.textContent = (state.baseAge + state.spaceTime).toFixed(1);
+
+            const shipPercentVal = (1 / gamma) * 100;
+            timeRatioBar.style.width = `${shipPercentVal}%`;
+            shipTimePercent.textContent = `${shipPercentVal.toFixed(0)}%`;
+
+            const diff = (state.earthTime - state.spaceTime).toFixed(1);
+            if (state.earthTime === 0) {
+                twinConclusionText.innerHTML = `Presiona <b>"Iniciar"</b> para comenzar la simulación del paso del tiempo a <b>${state.v.toFixed(3)}c</b>.`;
+            } else {
+                twinConclusionText.innerHTML = `
+                    A <b class="text-neon-cyan">${state.v.toFixed(3)}c</b> (Factor γ = ${gamma.toFixed(2)}): 
+                    Mientras para el astronauta transcurrieron <b class="text-neon-purple">${state.spaceTime.toFixed(1)} años</b>, 
+                    en la Tierra pasaron <b class="text-neon-cyan">${state.earthTime.toFixed(1)} años</b>. 
+                    (El gemelo en la Tierra es <span class="text-neon-amber font-bold">${diff} años más viejo</span>).
+                `;
+            }
+        }
+
+        // --- 8. SIMULACIÓN Y DIBUJO EN CANVAS ---
+        function updatePhysics(dt) {
+            if (!state.isRunning) return;
+
+            const gamma = calculateGamma(state.v);
+
+            // Flow of time
+            const dtEarth = dt * 1.5;
+            const dtSpace = dtEarth / gamma;
+
+            state.earthTime += dtEarth;
+            state.spaceTime += dtSpace;
+
+            // Oscillate Photons
+            const clockFreq = 1.2;
+
+            // Earth photon
+            state.lightPulse1 += state.dir1 * clockFreq * dtEarth;
+            if (state.lightPulse1 >= 1.0) { state.lightPulse1 = 1.0; state.dir1 = -1; }
+            if (state.lightPulse1 <= 0.0) { state.lightPulse1 = 0.0; state.dir1 = 1; }
+
+            // Ship photon (ticking slower in observers frame)
+            state.lightPulse2 += state.dir2 * clockFreq * dtSpace;
+            if (state.lightPulse2 >= 1.0) { state.lightPulse2 = 1.0; state.dir2 = -1; }
+            if (state.lightPulse2 <= 0.0) { state.lightPulse2 = 0.0; state.dir2 = 1; }
+
+            // Move ship horizontally
+            state.shipOffsetX += state.v * 120 * dtEarth;
+            const maxOffset = canvas.width * 0.22;
+            if (state.shipOffsetX > maxOffset) {
+                state.shipOffsetX = -maxOffset;
+                state.zigzagPath = [];
+            }
+
+            updateAllMetrics();
+        }
+
+        function renderCanvas() {
+            if (!canvas || !ctx) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const w = canvas.width;
+            const h = canvas.height;
+            const mirrorGap = h * 0.45;
+            const topY = h * 0.28;
+            const bottomY = topY + mirrorGap;
+
+            const earthClockX = w * 0.25;
+            const shipClockXCenter = w * 0.70;
+            const currentShipX = shipClockXCenter + state.shipOffsetX;
+
+            const currentFuel = FUEL_DATABASE[state.selectedFuelKey];
+
+            // --- DIBUJAR RELOJ 1: TIERRA ---
+            ctx.save();
+            ctx.fillStyle = '#00f3ff';
+            ctx.font = 'bold 11px Orbitron';
+            ctx.textAlign = 'center';
+            ctx.fillText("1. TIERRA (En Reposo)", earthClockX, topY - 30);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '10px Rajdhani';
+            ctx.fillText("Trayectoria Recta Vertical", earthClockX, topY - 16);
+
+            // Espejos
+            ctx.strokeStyle = '#00f3ff';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#00f3ff';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.moveTo(earthClockX - 40, topY);
+            ctx.lineTo(earthClockX + 40, topY);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(earthClockX - 40, bottomY);
+            ctx.lineTo(earthClockX + 40, bottomY);
+            ctx.stroke();
+
+            // Linea guia
+            ctx.strokeStyle = 'rgba(0, 243, 255, 0.15)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([3, 3]);
+            ctx.beginPath();
+            ctx.moveTo(earthClockX, topY);
+            ctx.lineTo(earthClockX, bottomY);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Foton
+            const photon1Y = topY + state.lightPulse1 * mirrorGap;
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = '#00f3ff';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(earthClockX, photon1Y, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+
+            // --- DIBUJAR RELOJ 2: NAVE ESPACIAL ---
+            ctx.save();
+            ctx.fillStyle = currentFuel.glowColor;
+            ctx.font = 'bold 11px Orbitron';
+            ctx.textAlign = 'center';
+            ctx.fillText("2. NAVE ESPACIAL (" + currentFuel.name + ")", shipClockXCenter, topY - 30);
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '10px Rajdhani';
+            ctx.fillText("Trayectoria Diagonal en Zig-Zag", shipClockXCenter, topY - 16);
+
+            // Clip area para el lado de la nave
+            ctx.beginPath();
+            ctx.rect(w * 0.48, 0, w * 0.5, h);
+            ctx.clip();
+
+            const photon2Y = topY + state.lightPulse2 * mirrorGap;
+
+            if (state.isRunning) {
+                state.zigzagPath.push({ x: currentShipX, y: photon2Y });
+                if (state.zigzagPath.length > 90) state.zigzagPath.shift();
+            }
+
+            // Dibujar trazado zig-zag
+            if (state.zigzagPath.length > 1) {
+                ctx.strokeStyle = currentFuel.glowColor;
+                ctx.lineWidth = 2;
+                ctx.shadowColor = currentFuel.glowColor;
+                ctx.shadowBlur = 6;
+                ctx.beginPath();
+                ctx.moveTo(state.zigzagPath[0].x, state.zigzagPath[0].y);
+                for (let i = 1; i < state.zigzagPath.length; i++) {
+                    ctx.lineTo(state.zigzagPath[i].x, state.zigzagPath[i].y);
+                }
+                ctx.stroke();
+            }
+
+            // Espejos moviles de la nave
+            ctx.strokeStyle = currentFuel.glowColor;
+            ctx.lineWidth = 3;
+            ctx.shadowColor = currentFuel.glowColor;
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.moveTo(currentShipX - 40, topY);
+            ctx.lineTo(currentShipX + 40, topY);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(currentShipX - 40, bottomY);
+            ctx.lineTo(currentShipX + 40, bottomY);
+            ctx.stroke();
+
+            // Cuerpito de la Nave
+            ctx.fillStyle = 'rgba(17, 24, 39, 0.5)';
+            ctx.strokeStyle = currentFuel.glowColor;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.roundRect(currentShipX - 48, topY - 10, 96, mirrorGap + 20, 10);
+            ctx.fill();
+            ctx.stroke();
+
+            // Foton de la nave
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = currentFuel.glowColor;
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(currentShipX, photon2Y, 6, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.restore();
+
+            // Separador central
+            ctx.strokeStyle = '#1f2937';
+            ctx.lineWidth = 1.5;
+            ctx.beginPath();
+            ctx.moveTo(w * 0.48, 15);
+            ctx.lineTo(w * 0.48, h - 15);
+            ctx.stroke();
+        }
+
+        // --- 9. EVENT LISTENERS ---
+        document.querySelectorAll('.fuel-card').forEach(card => {
+            card.addEventListener('click', () => {
+                setFuelType(card.getAttribute('data-fuel'));
+            });
+        });
+
+        speedSlider.addEventListener('input', (e) => {
+            state.v = parseFloat(e.target.value);
+            updateAllMetrics();
+            updateChartHighlight();
+        });
+
+        btnPlayPause.addEventListener('click', () => {
+            state.isRunning = !state.isRunning;
+            if (state.isRunning) {
+                playIcon.className = "fa-solid fa-pause";
+                playBtnText.textContent = "Pausar";
+            } else {
+                playIcon.className = "fa-solid fa-play";
+                playBtnText.textContent = "Reanudar";
+            }
+        });
+
+        btnReset.addEventListener('click', () => {
+            state.isRunning = false;
+            state.earthTime = 0.0;
+            state.spaceTime = 0.0;
+            state.lightPulse1 = 0.0;
+            state.lightPulse2 = 0.0;
+            state.dir1 = 1;
+            state.dir2 = 1;
+            state.shipOffsetX = 0;
+            state.zigzagPath = [];
+
+            playIcon.className = "fa-solid fa-play";
+            playBtnText.textContent = "Iniciar";
+            updateAllMetrics();
+            renderCanvas();
+        });
+
+        // --- 10. ANIMATION LOOP ---
+        let lastTime = 0;
+        function loop(timestamp) {
+            if (!lastTime) lastTime = timestamp;
+            const dt = Math.min((timestamp - lastTime) / 1000, 0.1);
+            lastTime = timestamp;
+
+            updatePhysics(dt);
+            renderCanvas();
+
+            requestAnimationFrame(loop);
+        }
+
+        // Initialize on window load
+        window.onload = function() {
+            resizeCanvas();
+            initGammaChart();
+            setFuelType('fusion');
+            requestAnimationFrame(loop);
+        };
+    </script>
+</body>
+</html>
